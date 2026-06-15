@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>A4 ML Projects — Index</title>
+<style>
+  :root {
+    --ib-blue: #1a3a5c;
+    --ib-accent: #2e86de;
+    --ib-dark: #0f2a47;
+    --code-bg: #f8f9fa;
+    --hl-green: #27ae60;
+    --hl-purple: #8e44ad;
+    --hl-orange: #e67e22;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f4f6f9;
+    color: #2c3e50;
+    line-height: 1.7;
+    padding: 0;
+  }
+  .header {
+    background: linear-gradient(135deg, var(--ib-blue), #1a5276);
+    color: white;
+    padding: 40px 60px;
+    position: relative;
+  }
+  .header h1 { font-size: 2em; margin-bottom: 8px; }
+  .header .meta { opacity: 0.85; font-size: 0.95em; margin-bottom: 15px; }
+  .header .meta span { margin-right: 20px; }
+  .header .badge { 
+    display: inline-block;
+    background: var(--hl-purple);
+    color: white; padding: 4px 14px; border-radius: 20px;
+    font-size: 0.85em; font-weight: 600; margin: 0 4px 4px 0;
+  }
+  .header .badge.sl { background: #27ae60; }
+  .btn-colab {
+    display: inline-block; background: #1a3a5c; color: white;
+    padding: 10px 24px; border-radius: 6px; text-decoration: none;
+    font-weight: 600; margin-top: 12px; border: 2px solid rgba(255,255,255,0.3);
+    transition: all 0.2s;
+  }
+  .btn-colab:hover { background: #2e86de; border-color: transparent; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+  .section { 
+    background: white; border-radius: 12px; padding: 30px 35px;
+    margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .section h2 { 
+    color: var(--ib-blue); font-size: 1.4em; margin-bottom: 18px;
+    padding-bottom: 10px; border-bottom: 3px solid var(--ib-accent);
+  }
+  .section h3 { color: #1a5276; font-size: 1.15em; margin: 20px 0 12px; }
+  .section p { margin: 10px 0; }
+  .code-card {
+    background: #ffffff; border-radius: 10px; margin: 15px 0;
+    border: 1px solid #d0d7de; box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+  .code-card .code-header {
+    background: #f0f2f5; padding: 8px 16px; font-size: 0.85em;
+    color: #57606a; border-bottom: 1px solid #d0d7de;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .code-card .code-header .lang { font-weight: 600; color: var(--ib-accent); }
+  .code-card pre {
+    background: #ffffff; padding: 18px 20px; overflow-x: auto;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.88em; line-height: 1.6; margin: 0;
+    border-left: 4px solid var(--ib-accent);
+  }
+  .code-card code { font-family: inherit; }
+  .kw { color: #d63384; font-weight: 600; }
+  .str { color: #0d6efd; }
+  .num { color: #198754; }
+  .cmt { color: #6c757d; font-style: italic; }
+  .op { color: #dc3545; }
+  .fn { color: #6f42c1; }
+  .va { color: #0d6efd; font-weight: 500; }
+  .output-box {
+    background: #f8f9fa; border-left: 4px solid #6c757d;
+    padding: 15px 20px; margin: 10px 0; border-radius: 0 6px 6px 0;
+    font-family: 'Consolas', monospace; font-size: 0.9em;
+    white-space: pre-wrap; overflow-x: auto;
+  }
+  .highlight-box {
+    background: #fef9e7; border-left: 4px solid #f39c12;
+    padding: 14px 18px; margin: 12px 0; border-radius: 0 6px 6px 0;
+  }
+  .data-table {
+    width: 100%; border-collapse: collapse; margin: 12px 0;
+    border-radius: 8px; overflow: hidden;
+  }
+  .data-table th {
+    background: var(--ib-blue); color: white; padding: 10px 14px;
+    font-weight: 600; text-align: left; font-size: 0.9em;
+  }
+  .data-table td { padding: 8px 14px; border-bottom: 1px solid #e9ecef; }
+  .data-table tr:nth-child(even) { background: #f8f9fa; }
+  .data-table tr:hover { background: #e8f0fe; }
+  .img-container {
+    margin: 15px 0; text-align: center;
+  }
+  .img-container img {
+    max-width: 100%; border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .interactive-box {
+    background: #eaf2f8; border: 2px solid var(--ib-accent);
+    border-radius: 10px; padding: 20px; margin: 15px 0;
+  }
+  .interactive-box label { font-weight: 600; margin-right: 10px; }
+  .interactive-box input[type="range"] {
+    width: 300px; vertical-align: middle;
+  }
+  .interactive-box .result { 
+    font-size: 1.1em; font-weight: 600; color: var(--ib-accent);
+    margin-top: 10px;
+  }
+  .hl-badge {
+    display: inline-block; background: var(--hl-purple);
+    color: white; padding: 3px 12px; border-radius: 12px;
+    font-size: 0.8em; font-weight: 600; margin: 0 3px;
+  }
+  .hl-badge.sl { background: #27ae60; }
+  .hl-badge.to-know { background: #2e86de; }
+  .hl-badge.warning { background: #e67e22; }
+  .question-box {
+    background: #f0f4ff; border: 1px solid var(--ib-accent);
+    border-radius: 10px; padding: 20px; margin: 15px 0;
+  }
+  .question-box p { margin: 6px 0; }
+  .term-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px; margin: 15px 0;
+  }
+  .term-item {
+    background: #f8f9fa; padding: 8px 12px; border-radius: 6px;
+    border-left: 3px solid var(--ib-accent);
+  }
+  .term-item strong { display: block; color: var(--ib-blue); }
+  .nav-links { 
+    display: flex; justify-content: space-between; margin: 20px 0;
+    padding: 15px 0; border-top: 1px solid #ddd;
+  }
+  .nav-links a { color: var(--ib-accent); text-decoration: none; font-weight: 600; }
+  .nav-links a:hover { text-decoration: underline; }
+  @media (max-width: 768px) {
+    .header { padding: 25px 20px; }
+    .header h1 { font-size: 1.4em; }
+    .section { padding: 20px; }
+    .interactive-box input[type="range"] { width: 180px; }
+  }
+</style>
+
+.suite-header {
+  font-size: 1.5em; color: var(--ib-blue);
+  margin: 40px 0 20px; padding: 15px 25px;
+  background: white; border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-left: 5px solid var(--ib-accent);
+}
+.project-card {
+  display: flex; background: white; border-radius: 10px;
+  margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  overflow: hidden; transition: transform 0.2s;
+  text-decoration: none; color: inherit;
+}
+.project-card:hover { transform: translateX(5px); }
+.project-card .num {
+  display: flex; align-items: center; justify-content: center;
+  min-width: 70px; font-size: 1.5em; font-weight: 700; color: white;
+}
+.project-card .info { padding: 18px 22px; flex: 1; }
+.project-card .info h3 { margin: 0 0 5px; color: var(--ib-blue); }
+.project-card .info p { margin: 0; font-size: 0.92em; color: #555; }
+.project-card .info .tags { margin-top: 8px; }
+.project-card .info .syllabus-badge {
+  display: inline-block; background: #e8f0fe; color: var(--ib-accent);
+  padding: 2px 10px; border-radius: 10px; font-size: 0.8em; font-weight: 600;
+}
+</head>
+<body>
+<div class="header"><h1>🤖 A4 Machine Learning Projects</h1>
+  <div class="meta">IB DP Computer Science 2027 | Oxford Course Companion Aligned | Real Data</div>
+  <div><span class="badge" style="background:#27ae60">Foundation (SL+HL)</span><span class="badge" style="background:#8e44ad">Extension (HL Only)</span></div>
+</div>
+<div class="container">
+  
+<div class="section" style="background:linear-gradient(135deg,#eaf2f8,white);text-align:center;">
+  <h2 style="border:none;color:var(--ib-blue)">🧠 A4 Machine Learning — Project Suite</h2>
+  <p style="font-size:1.1em;max-width:700px;margin:12px auto;">
+    All projects use <strong>real datasets</strong> and follow the IB DP Computer Science 2027 syllabus
+    alongside the Oxford Course Companion. Foundation for all students; Extension for HL only.
+  </p>
+  <div style="margin:15px 0">
+    <span class="hl-badge sl">SL + HL</span>
+    <span class="hl-badge" style="background:#8e44ad">HL Only</span>
+    <span class="hl-badge to-know">Real Data</span>
+  </div>
+</div>
+<div class="suite-header">📁 Suite 1: Foundation <span style="font-weight:normal;font-size:0.7em;color:#666">— SL & HL — 一个数据集走到底</span></div><a href="suite1_project1.html" class="project-card">
+  <div class="num" style="background:#2e86de">1</div>
+  <div class="info">
+    <h3>Exploratory Data Analysis & ML Types</h3>
+    <p>加载真实房价数据，理解监督/无监督/强化学习，数据可视化与硬件需求讨论</p>
+    <div class="tags">
+      <span class="syllabus-badge">A4.1.1, A4.1.2</span>
+      <span class="hl-badge sl">SL+HL</span>
+    </div>
+  </div>
+</a><a href="suite1_project2.html" class="project-card">
+  <div class="num" style="background:#27ae60">2</div>
+  <div class="info">
+    <h3>Data Preprocessing Pipeline</h3>
+    <p>处理缺失值、异常值检测、特征选择 (Filter/RFE)、标准化与 PCA 降维</p>
+    <div class="tags">
+      <span class="syllabus-badge">A4.2.1–A4.2.3</span>
+      <span class="hl-badge sl">SL+HL</span>
+    </div>
+  </div>
+</a><a href="suite1_project3.html" class="project-card">
+  <div class="num" style="background:#e67e22">3</div>
+  <div class="info">
+    <h3>Linear Regression & Model Evaluation</h3>
+    <p>一元/多元线性回归、r²、残差分析、Ridge/Lasso 正则化对比</p>
+    <div class="tags">
+      <span class="syllabus-badge">A4.3.1, A4.3.3</span>
+      <span class="hl-badge sl">SL+HL</span>
+    </div>
+  </div>
+</a><a href="suite1_project4.html" class="project-card">
+  <div class="num" style="background:#8e44ad">4</div>
+  <div class="info">
+    <h3>Hyperparameter Tuning & Validation</h3>
+    <p>Train/Test/Validation 拆分、K-Fold 交叉验证、Grid Search、学习曲线</p>
+    <div class="tags">
+      <span class="syllabus-badge">A4.3.3</span>
+      <span class="hl-badge sl">SL+HL</span>
+    </div>
+  </div>
+</a><a href="suite1_project5.html" class="project-card">
+  <div class="num" style="background:#e74c3c">5</div>
+  <div class="info">
+    <h3>Classification Demo (K-NN & Decision Tree)</h3>
+    <p>用房价数据做高低价二分类，对比 K-NN 与决策树的准确率与可解释性</p>
+    <div class="tags">
+      <span class="syllabus-badge">A4.3.2</span>
+      <span class="hl-badge sl">SL+HL</span>
+    </div>
+  </div>
+</a><a href="suite1_project6.html" class="project-card">
+  <div class="num" style="background:#1abc9c">6</div>
+  <div class="info">
+    <h3>Ethics & Bias Audit</h3>
+    <p>算法公平性检测、区域偏见分析、隐私、问责与环境影响评估</p>
+    <div class="tags">
+      <span class="syllabus-badge">A4.4.1, A4.4.2</span>
+      <span class="hl-badge sl">SL+HL</span>
+    </div>
+  </div>
+</a><div class="suite-header">📁 Suite 2: Extension <span style="font-weight:normal;font-size:0.7em;color:#666">— HL Only — 四个真实数据集，进阶算法</span></div><a href="suite2_project7.html" class="project-card">
+  <div class="num" style="background:#e74c3c">7</div>
+  <div class="info">
+    <h3>Customer Churn Classification</h3>
+    <p>Telco 客户流失预测，特征工程、混淆矩阵、ROC AUC、Precision/Recall</p>
+    <div class="tags">
+      <span class="syllabus-badge">A4.3.2, A4.3.3</span>
+      <span class="hl-badge ">HL Only</span>
+    </div>
+  </div>
+</a><a href="suite2_project8.html" class="project-card">
+  <div class="num" style="background:#3498db">8</div>
+  <div class="info">
+    <h3>Customer Segmentation Clustering</h3>
+    <p>K-Means、层次聚类、DBSCAN、Elbow 法、Silhouette 分析</p>
+    <div class="tags">
+      <span class="syllabus-badge">A4.3.4</span>
+      <span class="hl-badge ">HL Only</span>
+    </div>
+  </div>
+</a><a href="suite2_project9.html" class="project-card">
+  <div class="num" style="background:#f39c12">9</div>
+  <div class="info">
+    <h3>Market Basket Association Rules</h3>
+    <p>购物篮分析、Apriori 算法、Support/Confidence/Lift</p>
+    <div class="tags">
+      <span class="syllabus-badge">A4.3.5</span>
+      <span class="hl-badge ">HL Only</span>
+    </div>
+  </div>
+</a><a href="suite2_project10.html" class="project-card">
+  <div class="num" style="background:#9b59b6">10</div>
+  <div class="info">
+    <h3>Image Classification: ANN vs CNN</h3>
+    <p>Fashion-MNIST 图像分类，ANN 与 CNN 架构对比、卷积深度解析</p>
+    <div class="tags">
+      <span class="syllabus-badge">A4.3.8–A4.3.10</span>
+      <span class="hl-badge ">HL Only</span>
+    </div>
+  </div>
+</a>
+<div class="section">
+  <h2>📚 Additional Resources</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:15px;">
+    <div class="term-item"><strong>📊 Datasets</strong>Housing · Telco Churn · Mall Customers · Online Retail · Fashion-MNIST</div>
+    <div class="term-item"><strong>🔗 Colab</strong>Each project includes a one-click Colab launch button</div>
+    <div class="term-item"><strong>📖 Coursebook</strong>Oxford Course Companion A4.1–A4.4 alignment</div>
+    <div class="term-item"><strong>✏️ IA Prep</strong>Use these projects as IA starter kits</div>
+  </div>
+</div>
+
+</div>
+</body></html>

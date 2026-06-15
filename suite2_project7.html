@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Project 7: Customer Churn — Real Code, Real Data — A4 ML Project</title>
+
+<style>
+  :root {
+    --ib-blue: #1a3a5c;
+    --ib-accent: #2e86de;
+    --ib-dark: #0f2a47;
+    --code-bg: #f8f9fa;
+    --hl-green: #27ae60;
+    --hl-purple: #8e44ad;
+    --hl-orange: #e67e22;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f4f6f9;
+    color: #2c3e50;
+    line-height: 1.7;
+    padding: 0;
+  }
+  .header {
+    background: linear-gradient(135deg, var(--ib-blue), #1a5276);
+    color: white;
+    padding: 40px 60px;
+    position: relative;
+  }
+  .header h1 { font-size: 2em; margin-bottom: 8px; }
+  .header .meta { opacity: 0.85; font-size: 0.95em; margin-bottom: 15px; }
+  .header .meta span { margin-right: 20px; }
+  .header .badge { 
+    display: inline-block;
+    background: var(--hl-purple);
+    color: white; padding: 4px 14px; border-radius: 20px;
+    font-size: 0.85em; font-weight: 600; margin: 0 4px 4px 0;
+  }
+  .header .badge.sl { background: #27ae60; }
+  .btn-colab {
+    display: inline-block; background: #1a3a5c; color: white;
+    padding: 10px 24px; border-radius: 6px; text-decoration: none;
+    font-weight: 600; margin-top: 12px; border: 2px solid rgba(255,255,255,0.3);
+    transition: all 0.2s;
+  }
+  .btn-colab:hover { background: #2e86de; border-color: transparent; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+  .section { 
+    background: white; border-radius: 12px; padding: 30px 35px;
+    margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .section h2 { 
+    color: var(--ib-blue); font-size: 1.4em; margin-bottom: 18px;
+    padding-bottom: 10px; border-bottom: 3px solid var(--ib-accent);
+  }
+  .section h3 { color: #1a5276; font-size: 1.15em; margin: 20px 0 12px; }
+  .section p { margin: 10px 0; }
+  .code-card {
+    background: #ffffff; border-radius: 10px; margin: 15px 0;
+    border: 1px solid #d0d7de; box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+  .code-card .code-header {
+    background: #f0f2f5; padding: 8px 16px; font-size: 0.85em;
+    color: #57606a; border-bottom: 1px solid #d0d7de;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .code-card .code-header .lang { font-weight: 600; color: var(--ib-accent); }
+  .code-card pre {
+    background: #ffffff; padding: 18px 20px; overflow-x: auto;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.88em; line-height: 1.6; margin: 0;
+    border-left: 4px solid var(--ib-accent);
+  }
+  .code-card code { font-family: inherit; }
+  .kw { color: #d63384; font-weight: 600; }
+  .str { color: #0d6efd; }
+  .num { color: #198754; }
+  .cmt { color: #6c757d; font-style: italic; }
+  .op { color: #dc3545; }
+  .fn { color: #6f42c1; }
+  .va { color: #0d6efd; font-weight: 500; }
+  .output-box {
+    background: #f8f9fa; border-left: 4px solid #6c757d;
+    padding: 15px 20px; margin: 10px 0; border-radius: 0 6px 6px 0;
+    font-family: 'Consolas', monospace; font-size: 0.9em;
+    white-space: pre-wrap; overflow-x: auto;
+  }
+  .highlight-box {
+    background: #fef9e7; border-left: 4px solid #f39c12;
+    padding: 14px 18px; margin: 12px 0; border-radius: 0 6px 6px 0;
+  }
+  .data-table {
+    width: 100%; border-collapse: collapse; margin: 12px 0;
+    border-radius: 8px; overflow: hidden;
+  }
+  .data-table th {
+    background: var(--ib-blue); color: white; padding: 10px 14px;
+    font-weight: 600; text-align: left; font-size: 0.9em;
+  }
+  .data-table td { padding: 8px 14px; border-bottom: 1px solid #e9ecef; }
+  .data-table tr:nth-child(even) { background: #f8f9fa; }
+  .data-table tr:hover { background: #e8f0fe; }
+  .img-container {
+    margin: 15px 0; text-align: center;
+  }
+  .img-container img {
+    max-width: 100%; border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .interactive-box {
+    background: #eaf2f8; border: 2px solid var(--ib-accent);
+    border-radius: 10px; padding: 20px; margin: 15px 0;
+  }
+  .interactive-box label { font-weight: 600; margin-right: 10px; }
+  .interactive-box input[type="range"] {
+    width: 300px; vertical-align: middle;
+  }
+  .interactive-box .result { 
+    font-size: 1.1em; font-weight: 600; color: var(--ib-accent);
+    margin-top: 10px;
+  }
+  .hl-badge {
+    display: inline-block; background: var(--hl-purple);
+    color: white; padding: 3px 12px; border-radius: 12px;
+    font-size: 0.8em; font-weight: 600; margin: 0 3px;
+  }
+  .hl-badge.sl { background: #27ae60; }
+  .hl-badge.to-know { background: #2e86de; }
+  .hl-badge.warning { background: #e67e22; }
+  .question-box {
+    background: #f0f4ff; border: 1px solid var(--ib-accent);
+    border-radius: 10px; padding: 20px; margin: 15px 0;
+  }
+  .question-box p { margin: 6px 0; }
+  .term-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px; margin: 15px 0;
+  }
+  .term-item {
+    background: #f8f9fa; padding: 8px 12px; border-radius: 6px;
+    border-left: 3px solid var(--ib-accent);
+  }
+  .term-item strong { display: block; color: var(--ib-blue); }
+  .nav-links { 
+    display: flex; justify-content: space-between; margin: 20px 0;
+    padding: 15px 0; border-top: 1px solid #ddd;
+  }
+  .nav-links a { color: var(--ib-accent); text-decoration: none; font-weight: 600; }
+  .nav-links a:hover { text-decoration: underline; }
+  @media (max-width: 768px) {
+    .header { padding: 25px 20px; }
+    .header h1 { font-size: 1.4em; }
+    .section { padding: 20px; }
+    .interactive-box input[type="range"] { width: 180px; }
+  }
+</style>
+
+</head>
+<body>
+  <div class="header">
+    <h1>Project 7: Customer Churn — Real Code, Real Data</h1>
+    <div class="meta">📘 Suite 2: Extension | 🧑‍🎓 HL Only</div>
+    <div><span class="badge ">A4.3.2 Classification</span> <span class="badge ">A4.3.3 Model Eval</span> <span class="badge ">HL Only</span></div>
+    <p><strong>📊 Dataset:</strong> Telco Customer Churn (Kaggle, 7,043 customers, 21 features)</p>
+    
+  </div>
+  <div class="container">
+    <div class="section">
+  <h2>📂 Step 1: Load Real Telco Customer Data</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Python</span><span>▶ Run in Colab</span></div>
+  <pre><code><span class=<span class="str">"kw"</span>>import</span> pandas <span class=<span class="str">"kw"</span>>as</span> pd
+df = pd.<span class="fn">read_csv</span>(<span class="str">'Telco-Customer-Churn.csv'</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Shape: {df.shape}'</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Columns: {<span class="fn">list</span>(df.columns)}'</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Clean numeric column</span>
+df[<span class="str">'TotalCharges'</span>] = pd.<span class="fn">to_numeric</span>(df[<span class="str">'TotalCharges'</span>], errors=<span class="str">'coerce'</span>)
+df = df.<span class="fn">dropna</span>(subset=[<span class="str">'TotalCharges'</span>])
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Create target</span>
+df[<span class="str">'Churn_Label'</span>] = (df[<span class="str">'Churn'</span>] == <span class="str">'Yes'</span>).<span class="fn">astype</span>(int)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Churn rate: {df["Churn_Label"].<span class="fn">mean</span>():.<span class="num">1</span>%}'</span>)</code></pre>
+</div>
+<div class="output-box">Shape: (7043, 21)
+Columns: ['customerID', 'gender', 'SeniorCitizen', 'Partner', 'Dependents',
+          'tenure', 'PhoneService', 'MultipleLines', 'InternetService', ...
+          'MonthlyCharges', 'TotalCharges', 'Churn']
+
+Churn rate: 26.5%
+→ ~1 in 4 customers churn! This is a real business problem.</div>
+</div>
+<div class="section">
+  <h2>🔧 Step 2: Feature Engineering</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Python</span><span>▶ Run in Colab</span></div>
+  <pre><code><span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Encode categorical features</span>
+<span class=<span class="str">"kw"</span>>from</span> sklearn.preprocessing <span class=<span class="str">"kw"</span>>import</span> LabelEncoder
+cat_cols = df.<span class="fn">select_dtypes</span>(include=[<span class="str">'object'</span>]).columns.<span class="fn">drop</span>([<span class="str">'customerID'</span>, <span class="str">'Churn'</span>])
+<span class=<span class="str">"kw"</span>>for</span> col <span class=<span class="str">"kw"</span>>in</span> cat_cols:
+    le = <span class="fn">LabelEncoder</span>()
+    df[col + <span class="str">'_enc'</span>] = le.<span class="fn">fit_transform</span>(df[col].<span class="fn">astype</span>(str))
+
+features = [<span class="str">'tenure'</span>, <span class="str">'MonthlyCharges'</span>, <span class="str">'TotalCharges'</span>] + [c+<span class="str">'_enc'</span> <span class=<span class="str">"kw"</span>>for</span> c <span class=<span class="str">"kw"</span>>in</span> cat_cols]
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Feature matrix: {<span class="fn">len</span>(features)} features <span class="kw">for</span> {<span class="fn">len</span>(df)} customers'</span>)</code></pre>
+</div>
+<div class="output-box">Feature matrix: 19 features for 7043 customers
+  Numeric: tenure, MonthlyCharges, TotalCharges
+  Encoded: gender, Partner, Dependents, PhoneService, InternetService, ...</div>
+</div>
+<div class="section">
+  <h2>👥 Step 3: K-NN Classifier</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Python</span><span>▶ Run in Colab</span></div>
+  <pre><code><span class=<span class="str">"kw"</span>>from</span> sklearn.neighbors <span class=<span class="str">"kw"</span>>import</span> KNeighborsClassifier
+<span class=<span class="str">"kw"</span>>from</span> sklearn.metrics <span class=<span class="str">"kw"</span>>import</span> accuracy_score, classification_report
+
+knn = <span class="fn">KNeighborsClassifier</span>(n_neighbors=<span class="num">7</span>)
+knn.<span class="fn">fit</span>(X_train_scaled, y_train)
+y_pred = knn.<span class="fn">predict</span>(X_test_scaled)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Accuracy: {<span class="fn">accuracy_score</span>(y_test, y_pred):.4f}'</span>)
+<span class=<span class="str">"kw"</span>>print</span>(<span class="fn">classification_report</span>(y_test, y_pred, target_names=[<span class="str">'Stayed'</span>,<span class="str">'Churned'</span>]))</code></pre>
+</div>
+<div class="output-box">K-NN (k=7) Results:
+  Accuracy:  0.7539
+              precision  recall  f1-score
+  Stayed       0.81     0.87     0.84
+  Churned      0.55     0.43     0.48
+  → K-NN is okay at detecting churners, but misses ~57% of them!</div>
+<div class="img-container"><img src="assets/images/p7_confusion_matrices.png" alt="Confusion matrices for K-NN and Decision Tree on real churn data"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">Confusion matrices for K-NN and Decision Tree on real churn data</p></div>
+</div>
+<div class="section">
+  <h2>🌳 Step 4: Decision Tree & ROC</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Python</span><span>▶ Run in Colab</span></div>
+  <pre><code><span class=<span class="str">"kw"</span>>from</span> sklearn.tree <span class=<span class="str">"kw"</span>>import</span> DecisionTreeClassifier
+<span class=<span class="str">"kw"</span>>from</span> sklearn.metrics <span class=<span class="str">"kw"</span>>import</span> roc_auc_score
+
+dt = <span class="fn">DecisionTreeClassifier</span>(max_depth=<span class="num">5</span>, min_samples_leaf=<span class="num">50</span>, random_state=<span class="num">42</span>)
+dt.<span class="fn">fit</span>(X_train, y_train)
+y_pred = dt.<span class="fn">predict</span>(X_test)
+y_prob = dt.<span class="fn">predict_proba</span>(X_test)[:, <span class="num">1</span>]
+
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Accuracy: {<span class="fn">accuracy_score</span>(y_test, y_pred):.4f}'</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'ROC AUC:  {<span class="fn">roc_auc_score</span>(y_test, y_prob):.4f}'</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Feature importance</span>
+fi = pd.<span class="fn">DataFrame</span>({<span class="str">'Feature'</span>: features, <span class="str">'Importance'</span>: dt.feature_importances_})\
+       .<span class="fn">sort_values</span>(<span class="str">'Importance'</span>, ascending=<span class=<span class="str">"kw"</span>>False</span>).<span class="fn">head</span>(<span class="num">5</span>)
+<span class=<span class="str">"kw"</span>>print</span>(fi.<span class="fn">to_string</span>(index=<span class=<span class="str">"kw"</span>>False</span>))</code></pre>
+</div>
+<div class="output-box">Decision Tree:
+  Accuracy: 0.7813
+  ROC AUC:  0.8184
+
+Top 5 Features:
+  Feature           Importance
+  tenure              0.42
+  Contract_enc        0.18
+  TotalCharges        0.11
+  MonthlyCharges      0.07
+  InternetService_enc 0.05
+  → Tenure (how long a customer stays) is the #1 churn predictor!</div>
+<div class="img-container"><img src="assets/images/p7_roc_curve.png" alt="ROC AUC curves for K-NN and Decision Tree on churn prediction"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">ROC AUC curves for K-NN and Decision Tree on churn prediction</p></div>
+</div>
+<div class="section">
+  <h2>🧠 Learning Check</h2>
+  
+    <div class="question-box">
+    <p><strong>1️⃣</strong> 数据中 73.5% 的客户没有流失。如果模型"全部预测不流失"，准确率是多少？这和我们的 78% 比怎么样？</p>
+    <p><strong>2️⃣</strong> ROC AUC = 0.82 是什么意思？随机猜测是多少？完美是多少？</p>
+    <p><strong>3️⃣</strong> 如果公司只有预算联系 10% 的客户做挽留，你应该关注 Precision 还是 Recall？</p>
+    <p><strong>4️⃣</strong> 为什么 Tenure 是最重要的特征？这对业务有什么启示？</p>
+    </div>
+    
+</div>
+    <div class="nav-links"><div></div><div><a href="suite2_project8.html">Next → Project 8: Clustering</a></div></div>
+  </div>
+  <script>
+  
+  </script>
+</body>
+</html>

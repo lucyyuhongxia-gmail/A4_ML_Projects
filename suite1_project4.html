@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Project 4: Hyperparameter Tuning — Real Code, Real Data — A4 ML Project</title>
+
+<style>
+  :root {
+    --ib-blue: #1a3a5c;
+    --ib-accent: #2e86de;
+    --ib-dark: #0f2a47;
+    --code-bg: #f8f9fa;
+    --hl-green: #27ae60;
+    --hl-purple: #8e44ad;
+    --hl-orange: #e67e22;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f4f6f9;
+    color: #2c3e50;
+    line-height: 1.7;
+    padding: 0;
+  }
+  .header {
+    background: linear-gradient(135deg, var(--ib-blue), #1a5276);
+    color: white;
+    padding: 40px 60px;
+    position: relative;
+  }
+  .header h1 { font-size: 2em; margin-bottom: 8px; }
+  .header .meta { opacity: 0.85; font-size: 0.95em; margin-bottom: 15px; }
+  .header .meta span { margin-right: 20px; }
+  .header .badge { 
+    display: inline-block;
+    background: var(--hl-purple);
+    color: white; padding: 4px 14px; border-radius: 20px;
+    font-size: 0.85em; font-weight: 600; margin: 0 4px 4px 0;
+  }
+  .header .badge.sl { background: #27ae60; }
+  .btn-colab {
+    display: inline-block; background: #1a3a5c; color: white;
+    padding: 10px 24px; border-radius: 6px; text-decoration: none;
+    font-weight: 600; margin-top: 12px; border: 2px solid rgba(255,255,255,0.3);
+    transition: all 0.2s;
+  }
+  .btn-colab:hover { background: #2e86de; border-color: transparent; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+  .section { 
+    background: white; border-radius: 12px; padding: 30px 35px;
+    margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .section h2 { 
+    color: var(--ib-blue); font-size: 1.4em; margin-bottom: 18px;
+    padding-bottom: 10px; border-bottom: 3px solid var(--ib-accent);
+  }
+  .section h3 { color: #1a5276; font-size: 1.15em; margin: 20px 0 12px; }
+  .section p { margin: 10px 0; }
+  .code-card {
+    background: #ffffff; border-radius: 10px; margin: 15px 0;
+    border: 1px solid #d0d7de; box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+  .code-card .code-header {
+    background: #f0f2f5; padding: 8px 16px; font-size: 0.85em;
+    color: #57606a; border-bottom: 1px solid #d0d7de;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .code-card .code-header .lang { font-weight: 600; color: var(--ib-accent); }
+  .code-card pre {
+    background: #ffffff; padding: 18px 20px; overflow-x: auto;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.88em; line-height: 1.6; margin: 0;
+    border-left: 4px solid var(--ib-accent);
+  }
+  .code-card code { font-family: inherit; }
+  .kw { color: #d63384; font-weight: 600; }
+  .str { color: #0d6efd; }
+  .num { color: #198754; }
+  .cmt { color: #6c757d; font-style: italic; }
+  .op { color: #dc3545; }
+  .fn { color: #6f42c1; }
+  .va { color: #0d6efd; font-weight: 500; }
+  .output-box {
+    background: #f8f9fa; border-left: 4px solid #6c757d;
+    padding: 15px 20px; margin: 10px 0; border-radius: 0 6px 6px 0;
+    font-family: 'Consolas', monospace; font-size: 0.9em;
+    white-space: pre-wrap; overflow-x: auto;
+  }
+  .highlight-box {
+    background: #fef9e7; border-left: 4px solid #f39c12;
+    padding: 14px 18px; margin: 12px 0; border-radius: 0 6px 6px 0;
+  }
+  .data-table {
+    width: 100%; border-collapse: collapse; margin: 12px 0;
+    border-radius: 8px; overflow: hidden;
+  }
+  .data-table th {
+    background: var(--ib-blue); color: white; padding: 10px 14px;
+    font-weight: 600; text-align: left; font-size: 0.9em;
+  }
+  .data-table td { padding: 8px 14px; border-bottom: 1px solid #e9ecef; }
+  .data-table tr:nth-child(even) { background: #f8f9fa; }
+  .data-table tr:hover { background: #e8f0fe; }
+  .img-container {
+    margin: 15px 0; text-align: center;
+  }
+  .img-container img {
+    max-width: 100%; border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .interactive-box {
+    background: #eaf2f8; border: 2px solid var(--ib-accent);
+    border-radius: 10px; padding: 20px; margin: 15px 0;
+  }
+  .interactive-box label { font-weight: 600; margin-right: 10px; }
+  .interactive-box input[type="range"] {
+    width: 300px; vertical-align: middle;
+  }
+  .interactive-box .result { 
+    font-size: 1.1em; font-weight: 600; color: var(--ib-accent);
+    margin-top: 10px;
+  }
+  .hl-badge {
+    display: inline-block; background: var(--hl-purple);
+    color: white; padding: 3px 12px; border-radius: 12px;
+    font-size: 0.8em; font-weight: 600; margin: 0 3px;
+  }
+  .hl-badge.sl { background: #27ae60; }
+  .hl-badge.to-know { background: #2e86de; }
+  .hl-badge.warning { background: #e67e22; }
+  .question-box {
+    background: #f0f4ff; border: 1px solid var(--ib-accent);
+    border-radius: 10px; padding: 20px; margin: 15px 0;
+  }
+  .question-box p { margin: 6px 0; }
+  .term-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px; margin: 15px 0;
+  }
+  .term-item {
+    background: #f8f9fa; padding: 8px 12px; border-radius: 6px;
+    border-left: 3px solid var(--ib-accent);
+  }
+  .term-item strong { display: block; color: var(--ib-blue); }
+  .nav-links { 
+    display: flex; justify-content: space-between; margin: 20px 0;
+    padding: 15px 0; border-top: 1px solid #ddd;
+  }
+  .nav-links a { color: var(--ib-accent); text-decoration: none; font-weight: 600; }
+  .nav-links a:hover { text-decoration: underline; }
+  @media (max-width: 768px) {
+    .header { padding: 25px 20px; }
+    .header h1 { font-size: 1.4em; }
+    .section { padding: 20px; }
+    .interactive-box input[type="range"] { width: 180px; }
+  }
+</style>
+
+</head>
+<body>
+  <div class="header">
+    <h1>Project 4: Hyperparameter Tuning — Real Code, Real Data</h1>
+    <div class="meta">📘 Suite 1: Foundation | 🗓️ 课时 6–7 | 🧑‍🎓 HL</div>
+    <div><span class="badge ">A4.3.3 Hyperparameter Tuning</span> <span class="badge ">HL</span></div>
+    <p><strong>📊 Dataset:</strong> California Housing (20,640 rows, 8 features)</p>
+    
+  </div>
+  <div class="container">
+    <div class="section">
+  <h2>🎯 Step 1: The Overfitting Problem</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Overfit demo:
+  Ridge(α=0.0001): Train R²=0.6068, Test R²=0.5775, Gap=0.0293 ← overfitting!
+  Ridge(α=10):     Train R²=0.5863, Test R²=0.5761, Gap=0.0102 ← better</span><span>▶ Run in Colab</span></div>
+  <pre><code><span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Demonstrate overfitting</span>
+model = <span class="fn">Ridge</span>(alpha=<span class="num">0.0001</span>)  <span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Near-zero regularization</span>
+model.<span class="fn">fit</span>(X_train, y_train)
+train_r2 = <span class="fn">r2_score</span>(y_train, model.<span class="fn">predict</span>(X_train))
+test_r2 = <span class="fn">r2_score</span>(y_test, model.<span class="fn">predict</span>(X_test))
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Train R²: {train_r2:.4f}, Test R²: {test_r2:.4f}, Gap: {train_r2-test_r2:.4f}'</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Regularized version</span>
+model_r = <span class="fn">Ridge</span>(alpha=<span class="num">10</span>)
+model_r.<span class="fn">fit</span>(X_train, y_train)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Regularized: Train R²={<span class="fn">r2_score</span>(y_train, model_r.<span class="fn">predict</span>(X_train)):.4f}, '</span>
+      f<span class="str">'Test R²={<span class="fn">r2_score</span>(y_test, model_r.<span class="fn">predict</span>(X_test)):.4f}'</span>)</code></pre>
+</div>
+</div>
+<div class="section">
+  <h2>🔄 Step 2: 5-Fold Cross-Validation</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 5-Fold CV R² scores:
+  Fold 1: 0.5913
+  Fold 2: 0.5315
+  Fold 3: 0.5711
+  Fold 4: 0.5921
+  Fold 5: 0.5879
+  Mean: 0.5748 ± 0.0234</span><span>▶ Run in Colab</span></div>
+  <pre><code><span class=<span class="str">"kw"</span>>from</span> sklearn.model_selection <span class=<span class="str">"kw"</span>>import</span> cross_val_score
+scores = <span class="fn">cross_val_score</span>(<span class="fn">Ridge</span>(alpha=<span class="num">1.0</span>), X_scaled, y, cv=<span class="num">5</span>, scoring=<span class="str">'r2'</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'CV scores: {scores}'</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Mean: {scores.<span class="fn">mean</span>():.4f} ± {scores.<span class="fn">std</span>():.4f}'</span>)</code></pre>
+</div>
+<div class="img-container"><img src="assets/images/p4_cv_scores.png" alt="5-Fold CV scores with mean ± std band"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">5-Fold CV scores with mean ± std band</p></div>
+</div>
+<div class="section">
+  <h2>🔍 Step 3: Grid Search for Best Alpha</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Best alpha: 1.0
+Best CV R²: 0.5748</span><span>▶ Run in Colab</span></div>
+  <pre><code><span class=<span class="str">"kw"</span>>from</span> sklearn.model_selection <span class=<span class="str">"kw"</span>>import</span> GridSearchCV
+
+param_grid = {<span class="str">'alpha'</span>: [<span class="num">0.001</span>, <span class="num">0.01</span>, <span class="num">0.1</span>, <span class="num">0.5</span>, <span class="num">1</span>, <span class="num">5</span>, <span class="num">10</span>, <span class="num">50</span>, <span class="num">100</span>, <span class="num">500</span>]}
+grid = <span class="fn">GridSearchCV</span>(<span class="fn">Ridge</span>(), param_grid, cv=<span class="num">5</span>, scoring=<span class="str">'r2'</span>)
+grid.<span class="fn">fit</span>(X_scaled, y)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Best alpha: {grid.best_params_["alpha"]}'</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Best CV R²: {grid.best_score_:.4f}'</span>)</code></pre>
+</div>
+<div class="img-container"><img src="assets/images/p4_grid_search.png" alt="Grid search: effect of alpha on performance"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">Grid search: effect of alpha on performance</p></div>
+</div>
+<div class="section">
+  <h2>📈 Step 4: Learning Curves</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Python Code</span><span>▶ Run in Colab</span></div>
+  <pre><code><span class=<span class="str">"kw"</span>>from</span> sklearn.model_selection <span class=<span class="str">"kw"</span>>import</span> learning_curve
+
+train_sizes, train_scores, test_scores = <span class="fn">learning_curve</span>(
+    <span class="fn">Ridge</span>(alpha=<span class="num">1.0</span>), X_scaled, y,
+    train_sizes=np.<span class="fn">linspace</span>(<span class="num">0.1</span>, <span class="num">1.0</span>, <span class="num">10</span>), cv=<span class="num">5</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Training curve converges <span class=<span class="str">"kw"</span>>with</span> CV curve → no severe overfitting</span></code></pre>
+</div>
+<div class="img-container"><img src="assets/images/p4_learning_curve.png" alt="Learning curve showing train vs validation scores"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">Learning curve showing train vs validation scores</p></div>
+</div>
+<div class="section">
+  <h2>🧠 Learning Check</h2>
+  
+        <div class="question-box">
+        <p><strong>1️⃣</strong> K-Fold CV 的 K=5 意味着什么？如果 K 改成 10 会怎样？</p>
+        <p><strong>2️⃣</strong> Grid Search 找到的最佳 alpha=1.0。如果你用了 alpha=0.001 会怎样？</p>
+        <p><strong>3️⃣</strong> 学习曲线中，训练分数和 CV 分数之间的 gap 很大说明什么？</p>
+        <p><strong>4️⃣</strong> 为什么不能用测试集来调参？</p>
+        </div>
+        
+</div>
+    <div class="nav-links"><div><a href="suite1_project3.html">← Project 3: Regression</a></div><div><a href="suite1_project5.html">Next → Project 5: Classification</a></div></div>
+  </div>
+  <script>
+  
+  </script>
+</body>
+</html>

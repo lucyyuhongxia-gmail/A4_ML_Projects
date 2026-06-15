@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Project 2: Data Preprocessing — Real Code, Real Data — A4 ML Project</title>
+
+<style>
+  :root {
+    --ib-blue: #1a3a5c;
+    --ib-accent: #2e86de;
+    --ib-dark: #0f2a47;
+    --code-bg: #f8f9fa;
+    --hl-green: #27ae60;
+    --hl-purple: #8e44ad;
+    --hl-orange: #e67e22;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f4f6f9;
+    color: #2c3e50;
+    line-height: 1.7;
+    padding: 0;
+  }
+  .header {
+    background: linear-gradient(135deg, var(--ib-blue), #1a5276);
+    color: white;
+    padding: 40px 60px;
+    position: relative;
+  }
+  .header h1 { font-size: 2em; margin-bottom: 8px; }
+  .header .meta { opacity: 0.85; font-size: 0.95em; margin-bottom: 15px; }
+  .header .meta span { margin-right: 20px; }
+  .header .badge { 
+    display: inline-block;
+    background: var(--hl-purple);
+    color: white; padding: 4px 14px; border-radius: 20px;
+    font-size: 0.85em; font-weight: 600; margin: 0 4px 4px 0;
+  }
+  .header .badge.sl { background: #27ae60; }
+  .btn-colab {
+    display: inline-block; background: #1a3a5c; color: white;
+    padding: 10px 24px; border-radius: 6px; text-decoration: none;
+    font-weight: 600; margin-top: 12px; border: 2px solid rgba(255,255,255,0.3);
+    transition: all 0.2s;
+  }
+  .btn-colab:hover { background: #2e86de; border-color: transparent; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+  .section { 
+    background: white; border-radius: 12px; padding: 30px 35px;
+    margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .section h2 { 
+    color: var(--ib-blue); font-size: 1.4em; margin-bottom: 18px;
+    padding-bottom: 10px; border-bottom: 3px solid var(--ib-accent);
+  }
+  .section h3 { color: #1a5276; font-size: 1.15em; margin: 20px 0 12px; }
+  .section p { margin: 10px 0; }
+  .code-card {
+    background: #ffffff; border-radius: 10px; margin: 15px 0;
+    border: 1px solid #d0d7de; box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+  .code-card .code-header {
+    background: #f0f2f5; padding: 8px 16px; font-size: 0.85em;
+    color: #57606a; border-bottom: 1px solid #d0d7de;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .code-card .code-header .lang { font-weight: 600; color: var(--ib-accent); }
+  .code-card pre {
+    background: #ffffff; padding: 18px 20px; overflow-x: auto;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.88em; line-height: 1.6; margin: 0;
+    border-left: 4px solid var(--ib-accent);
+  }
+  .code-card code { font-family: inherit; }
+  .kw { color: #d63384; font-weight: 600; }
+  .str { color: #0d6efd; }
+  .num { color: #198754; }
+  .cmt { color: #6c757d; font-style: italic; }
+  .op { color: #dc3545; }
+  .fn { color: #6f42c1; }
+  .va { color: #0d6efd; font-weight: 500; }
+  .output-box {
+    background: #f8f9fa; border-left: 4px solid #6c757d;
+    padding: 15px 20px; margin: 10px 0; border-radius: 0 6px 6px 0;
+    font-family: 'Consolas', monospace; font-size: 0.9em;
+    white-space: pre-wrap; overflow-x: auto;
+  }
+  .highlight-box {
+    background: #fef9e7; border-left: 4px solid #f39c12;
+    padding: 14px 18px; margin: 12px 0; border-radius: 0 6px 6px 0;
+  }
+  .data-table {
+    width: 100%; border-collapse: collapse; margin: 12px 0;
+    border-radius: 8px; overflow: hidden;
+  }
+  .data-table th {
+    background: var(--ib-blue); color: white; padding: 10px 14px;
+    font-weight: 600; text-align: left; font-size: 0.9em;
+  }
+  .data-table td { padding: 8px 14px; border-bottom: 1px solid #e9ecef; }
+  .data-table tr:nth-child(even) { background: #f8f9fa; }
+  .data-table tr:hover { background: #e8f0fe; }
+  .img-container {
+    margin: 15px 0; text-align: center;
+  }
+  .img-container img {
+    max-width: 100%; border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .interactive-box {
+    background: #eaf2f8; border: 2px solid var(--ib-accent);
+    border-radius: 10px; padding: 20px; margin: 15px 0;
+  }
+  .interactive-box label { font-weight: 600; margin-right: 10px; }
+  .interactive-box input[type="range"] {
+    width: 300px; vertical-align: middle;
+  }
+  .interactive-box .result { 
+    font-size: 1.1em; font-weight: 600; color: var(--ib-accent);
+    margin-top: 10px;
+  }
+  .hl-badge {
+    display: inline-block; background: var(--hl-purple);
+    color: white; padding: 3px 12px; border-radius: 12px;
+    font-size: 0.8em; font-weight: 600; margin: 0 3px;
+  }
+  .hl-badge.sl { background: #27ae60; }
+  .hl-badge.to-know { background: #2e86de; }
+  .hl-badge.warning { background: #e67e22; }
+  .question-box {
+    background: #f0f4ff; border: 1px solid var(--ib-accent);
+    border-radius: 10px; padding: 20px; margin: 15px 0;
+  }
+  .question-box p { margin: 6px 0; }
+  .term-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px; margin: 15px 0;
+  }
+  .term-item {
+    background: #f8f9fa; padding: 8px 12px; border-radius: 6px;
+    border-left: 3px solid var(--ib-accent);
+  }
+  .term-item strong { display: block; color: var(--ib-blue); }
+  .nav-links { 
+    display: flex; justify-content: space-between; margin: 20px 0;
+    padding: 15px 0; border-top: 1px solid #ddd;
+  }
+  .nav-links a { color: var(--ib-accent); text-decoration: none; font-weight: 600; }
+  .nav-links a:hover { text-decoration: underline; }
+  @media (max-width: 768px) {
+    .header { padding: 25px 20px; }
+    .header h1 { font-size: 1.4em; }
+    .section { padding: 20px; }
+    .interactive-box input[type="range"] { width: 180px; }
+  }
+</style>
+
+</head>
+<body>
+  <div class="header">
+    <h1>Project 2: Data Preprocessing — Real Code, Real Data</h1>
+    <div class="meta">📘 Suite 1: Foundation | 🗓️ 课时 3–4 | 🧑‍🎓 HL</div>
+    <div><span class="badge ">A4.2.1 Data Cleaning</span> <span class="badge ">A4.2.2 Feature Selection</span> <span class="badge ">A4.2.3 Dimensionality Reduction</span> <span class="badge ">HL</span></div>
+    <p><strong>📊 Dataset:</strong> California Housing (20,640 rows, 8 numerical features)</p>
+    
+  </div>
+  <div class="container">
+    <div class="section">
+  <h2>📂 Step 1: Inject Realistic Data Problems</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Simulating real-world data quality issues</span><span>▶ Run in Colab</span></div>
+  <pre><code>OUTPUT_DIR = os.path.<span class="fn">join</span>(BASE_DIR, <span class="str">'suite1_project2_outputs'</span>); os.<span class="fn">makedirs</span>(OUTPUT_DIR, exist_ok=<span class=<span class="str">"kw"</span>>True</span>)
+
+np.random.<span class="fn">seed</span>(<span class="num">42</span>)  <span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># <span class=<span class="str">"kw"</span>>for</span> reproducibility of missing value injection</span>
+
+<span class="fn">print_section</span>(<span class="str">"PROJECT <span class="num">2</span>: DATA PREPROCESSING PIPELINE"</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ── <span class="num">1</span>. Introduce missing values <span class=<span class="str">"kw"</span>>for</span> demonstration ──</span>
+<span class="fn">print_section</span>(<span class="str">"<span class="num">1</span>. Data Quality Issues — Introducing Realistic Problems"</span>)
+
+df_dirty = df.<span class="fn">copy</span>()
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Inject missing values <span class="fn">randomly</span>(<span class="num">5</span>% <span class=<span class="str">"kw"</span>>in</span> selected columns)</span>
+<span class=<span class="str">"kw"</span>>for</span> col <span class=<span class="str">"kw"</span>>in</span> [<span class="str">'AveRooms'</span>, <span class="str">'AveBedrms'</span>]:
+    mask = np.random.<span class="fn">random</span>(<span class="fn">len</span>(df_dirty)) &lt; <span class="num">0.05</span>
+    df_dirty.loc[mask, col] = np.nan
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Inject outliers <span class=<span class="str">"kw"</span>>in</span> AveRooms</span>
+outlier_idx = np.random.<span class="fn">choice</span>(<span class="fn">len</span>(df_dirty), <span class="num">20</span>, replace=<span class=<span class="str">"kw"</span>>False</span>)
+df_dirty.loc[outlier_idx, <span class="str">'AveRooms'</span>] = df_dirty[<span class="str">'AveRooms'</span>].<span class="fn">max</span>() * np.random.<span class="fn">uniform</span>(<span class="num">3</span>, <span class="num">8</span>, <span class="num">20</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Inject an impossible value</span>
+df_dirty.loc[np.random.<span class="fn">randint</span>(<span class="num">0</span>, <span class="fn">len</span>(df_dirty)), <span class="str">'AveBedrms'</span>] = -<span class="num">1</span>
+
+<span class=<span class="str">"kw"</span>>print</span>(<span class="str">"=== Data Quality Report ==="</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"Missing values:"</span>)
+<span class=<span class="str">"kw"</span>>print</span>(df_dirty.<span class="fn">isnull</span>().<span class="fn">sum</span>().<span class="fn">to_string</span>())
+    <span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ...</span></code></pre>
+</div>
+<div class="output-box">Missing values injected (5%) in AveRooms, AveBedrms
+20 outlier values in AveRooms
+1 impossible value (AveBedrms = -1)</div>
+</div>
+<div class="section">
+  <h2>🚨 Step 2: Detect Missing Values & Outliers</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 IQR-based outlier detection</span><span>▶ Run in Colab</span></div>
+  <pre><code>df_dirty.loc[mask, col] = np.nan
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Inject outliers <span class=<span class="str">"kw"</span>>in</span> AveRooms</span>
+outlier_idx = np.random.<span class="fn">choice</span>(<span class="fn">len</span>(df_dirty), <span class="num">20</span>, replace=<span class=<span class="str">"kw"</span>>False</span>)
+df_dirty.loc[outlier_idx, <span class="str">'AveRooms'</span>] = df_dirty[<span class="str">'AveRooms'</span>].<span class="fn">max</span>() * np.random.<span class="fn">uniform</span>(<span class="num">3</span>, <span class="num">8</span>, <span class="num">20</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Inject an impossible value</span>
+df_dirty.loc[np.random.<span class="fn">randint</span>(<span class="num">0</span>, <span class="fn">len</span>(df_dirty)), <span class="str">'AveBedrms'</span>] = -<span class="num">1</span>
+
+<span class=<span class="str">"kw"</span>>print</span>(<span class="str">"=== Data Quality Report ==="</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"Missing values:"</span>)
+<span class=<span class="str">"kw"</span>>print</span>(df_dirty.<span class="fn">isnull</span>().<span class="fn">sum</span>().<span class="fn">to_string</span>())
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"\nTotal missing: {df_dirty.<span class="fn">isnull</span>().<span class="fn">sum</span>().<span class="fn">sum</span>():,} / {df_dirty.size:,}"</span>)
+missing_pct = df_dirty.<span class="fn">isnull</span>().<span class="fn">sum</span>().<span class="fn">sum</span>() / df_dirty.size * <span class="num">100</span>
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"Missing percentage: {missing_pct:.2f}%"</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ── <span class="num">2</span>. Missing Value Handling ──</span>
+<span class="fn">print_section</span>(<span class="str">"<span class="num">2</span>. Handling Missing Values"</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Option A: Drop rows <span class=<span class="str">"kw"</span>>with</span> <span class="fn">missing</span>(<span class=<span class="str">"kw"</span>>if</span> few)</span>
+df_drop = df_dirty.<span class="fn">dropna</span>()
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"After <span class="fn">dropna</span>(): {<span class="fn">len</span>(df_dirty)} → {<span class="fn">len</span>(df_drop)} <span class="fn">rows</span>(lost {<span class="fn">len</span>(df_dirty)-<span class="fn">len</span>(df_drop)})"</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Option B: Fill <span class=<span class="str">"kw"</span>>with</span> mean/median</span>
+df_filled = df_dirty.<span class="fn">copy</span>()
+    <span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ...</span></code></pre>
+</div>
+<div class="img-container"><img src="assets/images/p2_outlier_boxplots.png" alt="Box plots with IQR outlier detection on real data"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">Box plots with IQR outlier detection on real data</p></div>
+</div>
+<div class="section">
+  <h2>🎯 Step 3: Feature Selection (3 Strategies)</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Filter, Wrapper, Embedded feature selection</span><span>▶ Run in Colab</span></div>
+  <pre><code><span class="fn">print_section</span>(<span class="str">"<span class="num">4</span>. Feature Selection Strategies"</span>)
+
+<span class=<span class="str">"kw"</span>>from</span> sklearn.feature_selection <span class=<span class="str">"kw"</span>>import</span> SelectKBest, f_regression, RFE
+<span class=<span class="str">"kw"</span>>from</span> sklearn.linear_model <span class=<span class="str">"kw"</span>>import</span> LinearRegression
+
+X = df_filled[num_cols].<span class="fn">copy</span>()
+y = X.<span class="fn">pop</span>(<span class="str">'MedHouseVal'</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># 4a. Filter Method: Correlation-based</span>
+corr_with_target = X.<span class="fn">corrwith</span>(y).<span class="fn">abs</span>().<span class="fn">sort_values</span>(ascending=<span class=<span class="str">"kw"</span>>False</span>)
+<span class=<span class="str">"kw"</span>>print</span>(<span class="str">"\n=== 4a. Filter Method — Correlation <span class="</span>kw<span class="str">">with</span> Target ==="</span>)
+<span class=<span class="str">"kw"</span>>print</span>(corr_with_target.<span class="fn">to_string</span>())
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># 4b. SelectKBest</span>
+selector = <span class="fn">SelectKBest</span>(score_func=f_regression, k=<span class="str">'all'</span>)
+selector.<span class="fn">fit</span>(X, y)
+kbest_scores = pd.<span class="fn">DataFrame</span>({<span class="str">'Feature'</span>: X.columns, <span class="str">'F_Score'</span>: selector.scores_, <span class="str">'P_Value'</span>: selector.pvalues_})
+kbest_scores = kbest_scores.<span class="fn">sort_values</span>(<span class="str">'F_Score'</span>, ascending=<span class=<span class="str">"kw"</span>>False</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"\n=== 4b. <span class="fn">SelectKBest</span>(F-Regression) ==="</span>)
+<span class=<span class="str">"kw"</span>>print</span>(kbest_scores.<span class="fn">to_string</span>(index=<span class=<span class="str">"kw"</span>>False</span>))
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># 4c. <span class="fn">RFE</span>(Wrapper method)</span>
+model = <span class="fn">LinearRegression</span>()
+rfe = <span class="fn">RFE</span>(estimator=model, n_features_to_select=<span class="num">4</span>)
+rfe.<span class="fn">fit</span>(X, y)
+    <span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ...</span></code></pre>
+</div>
+<div class="output-box">Filter: correlation with target
+SelectKBest: F-regression scores
+RFE: recursive feature elimination</div>
+</div>
+<div class="section">
+  <h2>📐 Step 4: Feature Scaling</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 StandardScaler vs MinMaxScaler</span><span>▶ Run in Colab</span></div>
+  <pre><code><span class="fn">print_section</span>(<span class="str">"<span class="num">5</span>. Scaling — Normalization &amp; Standardization"</span>)
+
+<span class=<span class="str">"kw"</span>>from</span> sklearn.preprocessing <span class=<span class="str">"kw"</span>>import</span> StandardScaler, MinMaxScaler
+
+X_sample = X.<span class="fn">head</span>(<span class="num">10</span>)
+
+scaler_std = <span class="fn">StandardScaler</span>()
+X_std = scaler_std.<span class="fn">fit_transform</span>(X_sample)
+
+scaler_mm = <span class="fn">MinMaxScaler</span>()
+X_mm = scaler_mm.<span class="fn">fit_transform</span>(X_sample)
+
+<span class=<span class="str">"kw"</span>>print</span>(<span class="str">"<span class="fn">Original</span>(first <span class="num">5</span> rows, <span class="num">3</span> features):"</span>)
+<span class=<span class="str">"kw"</span>>print</span>(X_sample[[<span class="str">'MedInc'</span>, <span class="str">'HouseAge'</span>, <span class="str">'Population'</span>]].<span class="fn">head</span>().<span class="fn">to_string</span>())
+<span class=<span class="str">"kw"</span>>print</span>(<span class="str">"\nAfter <span class="fn">StandardScaler</span>(mean=<span class="num">0</span>, std=<span class="num">1</span>):"</span>)
+std_df = pd.<span class="fn">DataFrame</span>(X_std[:<span class="num">5</span>, :<span class="num">3</span>], columns=[<span class="str">'MedInc'</span>, <span class="str">'HouseAge'</span>, <span class="str">'Population'</span>])
+<span class=<span class="str">"kw"</span>>print</span>(std_df.<span class="fn">round</span>(<span class="num">3</span>).<span class="fn">to_string</span>())
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"\n  Mean ≈ {X_std[:<span class="num">5</span>, :<span class="num">3</span>].<span class="fn">mean</span>():.6f}, Std ≈ {X_std[:<span class="num">5</span>, :<span class="num">3</span>].<span class="fn">std</span>(ddof=<span class="num">0</span>):.6f}"</span>)
+<span class=<span class="str">"kw"</span>>print</span>(<span class="str">"\nAfter <span class="fn">MinMaxScaler</span>(range [<span class="num">0</span>,<span class="num">1</span>]):"</span>)
+mm_df = pd.<span class="fn">DataFrame</span>(X_mm[:<span class="num">5</span>, :<span class="num">3</span>], columns=[<span class="str">'MedInc'</span>, <span class="str">'HouseAge'</span>, <span class="str">'Population'</span>])
+<span class=<span class="str">"kw"</span>>print</span>(mm_df.<span class="fn">round</span>(<span class="num">3</span>).<span class="fn">to_string</span>())
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Visualize scaling</span>
+fig, axes = plt.<span class="fn">subplots</span>(<span class="num">1</span>, <span class="num">3</span>, figsize=(<span class="num">15</span>, <span class="num">4</span>))
+<span class=<span class="str">"kw"</span>>for</span> ax, data, title <span class=<span class="str">"kw"</span>>in</span> <span class="fn">zip</span>(axes, [X_sample.values, X_std, X_mm], 
+    <span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ...</span></code></pre>
+</div>
+<div class="img-container"><img src="assets/images/p2_scaling_comparison.png" alt="Original vs Standardized vs Normalized — real data"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">Original vs Standardized vs Normalized — real data</p></div>
+</div>
+<div class="section">
+  <h2>📉 Step 5: PCA — Dimensionality Reduction</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Principal Component Analysis on real 8-dimensional data</span><span>▶ Run in Colab</span></div>
+  <pre><code><span class=<span class="str">"kw"</span>>print</span>(<span class="str">"[Saved] p2_scaling_comparison.png"</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ── <span class="num">6</span>. Dimensionality <span class="fn">Reduction</span>(PCA) ──</span>
+<span class="fn">print_section</span>(<span class="str">"<span class="num">6</span>. Dimensionality Reduction — PCA"</span>)
+
+<span class=<span class="str">"kw"</span>>from</span> sklearn.decomposition <span class=<span class="str">"kw"</span>>import</span> PCA
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Scale full data first</span>
+scaler = <span class="fn">StandardScaler</span>()
+X_scaled = scaler.<span class="fn">fit_transform</span>(X)
+
+pca = <span class="fn">PCA</span>()
+pca_data = pca.<span class="fn">fit_transform</span>(X_scaled)
+pca_components_count = <span class="fn">len</span>(pca.explained_variance_ratio_)
+
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"Original dimensions: {X.shape[<span class="num">1</span>]}"</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"Components <span class="</span>kw<span class="str">">with</span> <span class="num">95</span>% variance: {(pca.explained_variance_ratio_.<span class="fn">cumsum</span>() &lt; <span class="num">0.95</span>).<span class="fn">sum</span>() + <span class="num">1</span>}"</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"\nExplained variance ratio per component:"</span>)
+<span class=<span class="str">"kw"</span>>for</span> i, (ev, cev) <span class=<span class="str">"kw"</span>>in</span> <span class="fn">enumerate</span>(<span class="fn">zip</span>(pca.explained_variance_ratio_, np.<span class="fn">cumsum</span>(pca.explained_variance_ratio_))):
+    <span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"  PC{i+<span class="num">1</span>}: {ev:.4f} ({cev:.4f} cumulative)"</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># PCA Scree + Cumulative</span>
+fig, axes = plt.<span class="fn">subplots</span>(<span class="num">1</span>, <span class="num">2</span>, figsize=(<span class="num">14</span>, <span class="num">5</span>))
+axes[<span class="num">0</span>].<span class="fn">bar</span>(<span class="fn">range</span>(<span class="num">1</span>, pca_components_count+<span class="num">1</span>), pca.explained_variance_ratio_, color=<span class="str">'<span <span class="kw">class</span>="cmt">#2e86de'</span>, alpha=<span class="num">0.7</span>)</span>
+axes[<span class="num">0</span>].<span class="fn">set_xlabel</span>(<span class="str">'Principal Component'</span>, fontsize=<span class="num">12</span>)
+    <span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ...</span></code></pre>
+</div>
+<div class="img-container"><img src="assets/images/p2_pca_analysis.png" alt="Scree plot + cumulative variance"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">Scree plot + cumulative variance</p></div>
+<div class="img-container"><img src="assets/images/p2_pca_2d.png" alt="PCA 2D projection colored by real house values"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">PCA 2D projection colored by real house values</p></div>
+</div>
+<div class="section">
+  <h2>🧠 Learning Check</h2>
+  
+        <div class="question-box">
+        <p><strong>1️⃣</strong> IQR 方法中 outlier 的判断标准是什么？为什么用 1.5？</p>
+        <p><strong>2️⃣</strong> StandardScaler 和 MinMaxScaler 有什么区别？分别适合什么场景？</p>
+        <p><strong>3️⃣</strong> PCA 之后的前两个主成分能解释多少方差？剩下的方差去哪了？</p>
+        <p><strong>4️⃣</strong> 如果特征 A 和特征 B 的相关系数为 0.95，你应该怎么做？</p>
+        </div>
+        
+</div>
+    <div class="nav-links"><div><a href="suite1_project1.html">← Project 1: EDA</a></div><div><a href="suite1_project3.html">Next → Project 3: Linear Regression</a></div></div>
+  </div>
+  <script>
+  
+  </script>
+</body>
+</html>

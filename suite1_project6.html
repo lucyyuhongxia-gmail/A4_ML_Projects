@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Project 6: Ethics & Bias Audit — Real Code, Real Data — A4 ML Project</title>
+
+<style>
+  :root {
+    --ib-blue: #1a3a5c;
+    --ib-accent: #2e86de;
+    --ib-dark: #0f2a47;
+    --code-bg: #f8f9fa;
+    --hl-green: #27ae60;
+    --hl-purple: #8e44ad;
+    --hl-orange: #e67e22;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f4f6f9;
+    color: #2c3e50;
+    line-height: 1.7;
+    padding: 0;
+  }
+  .header {
+    background: linear-gradient(135deg, var(--ib-blue), #1a5276);
+    color: white;
+    padding: 40px 60px;
+    position: relative;
+  }
+  .header h1 { font-size: 2em; margin-bottom: 8px; }
+  .header .meta { opacity: 0.85; font-size: 0.95em; margin-bottom: 15px; }
+  .header .meta span { margin-right: 20px; }
+  .header .badge { 
+    display: inline-block;
+    background: var(--hl-purple);
+    color: white; padding: 4px 14px; border-radius: 20px;
+    font-size: 0.85em; font-weight: 600; margin: 0 4px 4px 0;
+  }
+  .header .badge.sl { background: #27ae60; }
+  .btn-colab {
+    display: inline-block; background: #1a3a5c; color: white;
+    padding: 10px 24px; border-radius: 6px; text-decoration: none;
+    font-weight: 600; margin-top: 12px; border: 2px solid rgba(255,255,255,0.3);
+    transition: all 0.2s;
+  }
+  .btn-colab:hover { background: #2e86de; border-color: transparent; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+  .section { 
+    background: white; border-radius: 12px; padding: 30px 35px;
+    margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .section h2 { 
+    color: var(--ib-blue); font-size: 1.4em; margin-bottom: 18px;
+    padding-bottom: 10px; border-bottom: 3px solid var(--ib-accent);
+  }
+  .section h3 { color: #1a5276; font-size: 1.15em; margin: 20px 0 12px; }
+  .section p { margin: 10px 0; }
+  .code-card {
+    background: #ffffff; border-radius: 10px; margin: 15px 0;
+    border: 1px solid #d0d7de; box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+  .code-card .code-header {
+    background: #f0f2f5; padding: 8px 16px; font-size: 0.85em;
+    color: #57606a; border-bottom: 1px solid #d0d7de;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .code-card .code-header .lang { font-weight: 600; color: var(--ib-accent); }
+  .code-card pre {
+    background: #ffffff; padding: 18px 20px; overflow-x: auto;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.88em; line-height: 1.6; margin: 0;
+    border-left: 4px solid var(--ib-accent);
+  }
+  .code-card code { font-family: inherit; }
+  .kw { color: #d63384; font-weight: 600; }
+  .str { color: #0d6efd; }
+  .num { color: #198754; }
+  .cmt { color: #6c757d; font-style: italic; }
+  .op { color: #dc3545; }
+  .fn { color: #6f42c1; }
+  .va { color: #0d6efd; font-weight: 500; }
+  .output-box {
+    background: #f8f9fa; border-left: 4px solid #6c757d;
+    padding: 15px 20px; margin: 10px 0; border-radius: 0 6px 6px 0;
+    font-family: 'Consolas', monospace; font-size: 0.9em;
+    white-space: pre-wrap; overflow-x: auto;
+  }
+  .highlight-box {
+    background: #fef9e7; border-left: 4px solid #f39c12;
+    padding: 14px 18px; margin: 12px 0; border-radius: 0 6px 6px 0;
+  }
+  .data-table {
+    width: 100%; border-collapse: collapse; margin: 12px 0;
+    border-radius: 8px; overflow: hidden;
+  }
+  .data-table th {
+    background: var(--ib-blue); color: white; padding: 10px 14px;
+    font-weight: 600; text-align: left; font-size: 0.9em;
+  }
+  .data-table td { padding: 8px 14px; border-bottom: 1px solid #e9ecef; }
+  .data-table tr:nth-child(even) { background: #f8f9fa; }
+  .data-table tr:hover { background: #e8f0fe; }
+  .img-container {
+    margin: 15px 0; text-align: center;
+  }
+  .img-container img {
+    max-width: 100%; border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .interactive-box {
+    background: #eaf2f8; border: 2px solid var(--ib-accent);
+    border-radius: 10px; padding: 20px; margin: 15px 0;
+  }
+  .interactive-box label { font-weight: 600; margin-right: 10px; }
+  .interactive-box input[type="range"] {
+    width: 300px; vertical-align: middle;
+  }
+  .interactive-box .result { 
+    font-size: 1.1em; font-weight: 600; color: var(--ib-accent);
+    margin-top: 10px;
+  }
+  .hl-badge {
+    display: inline-block; background: var(--hl-purple);
+    color: white; padding: 3px 12px; border-radius: 12px;
+    font-size: 0.8em; font-weight: 600; margin: 0 3px;
+  }
+  .hl-badge.sl { background: #27ae60; }
+  .hl-badge.to-know { background: #2e86de; }
+  .hl-badge.warning { background: #e67e22; }
+  .question-box {
+    background: #f0f4ff; border: 1px solid var(--ib-accent);
+    border-radius: 10px; padding: 20px; margin: 15px 0;
+  }
+  .question-box p { margin: 6px 0; }
+  .term-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px; margin: 15px 0;
+  }
+  .term-item {
+    background: #f8f9fa; padding: 8px 12px; border-radius: 6px;
+    border-left: 3px solid var(--ib-accent);
+  }
+  .term-item strong { display: block; color: var(--ib-blue); }
+  .nav-links { 
+    display: flex; justify-content: space-between; margin: 20px 0;
+    padding: 15px 0; border-top: 1px solid #ddd;
+  }
+  .nav-links a { color: var(--ib-accent); text-decoration: none; font-weight: 600; }
+  .nav-links a:hover { text-decoration: underline; }
+  @media (max-width: 768px) {
+    .header { padding: 25px 20px; }
+    .header h1 { font-size: 1.4em; }
+    .section { padding: 20px; }
+    .interactive-box input[type="range"] { width: 180px; }
+  }
+</style>
+
+</head>
+<body>
+  <div class="header">
+    <h1>Project 6: Ethics & Bias Audit — Real Code, Real Data</h1>
+    <div class="meta">📘 Suite 1: Foundation | 🗓️ 课时 8 | 🧑‍🎓 SL + HL</div>
+    <div><span class="badge ">A4.4.1 Ethical Implications</span> <span class="badge ">A4.4.2 Technology in Life</span> <span class="badge sl">SL + HL</span></div>
+    <p><strong>📊 Dataset:</strong> California Housing (+ simulated sensitive attributes)</p>
+    
+  </div>
+  <div class="container">
+    <div class="section">
+  <h2>⚠️ Step 1: Define Sensitive Attributes</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Region split:
+  South: 12,243
+  North:  8,397
+
+IncomeGroup:
+  Low:     6,880
+  Middle:  6,880
+  High:    6,880</span><span>▶ Run in Colab</span></div>
+  <pre><code><span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Simulate a sensitive <span class="fn">attribute</span>(region)</span>
+lat_median = df[<span class="str">'Latitude'</span>].<span class="fn">median</span>()
+df[<span class="str">'Region'</span>] = np.<span class="fn">where</span>(df[<span class="str">'Latitude'</span>] &gt;= lat_median, <span class="str">'North'</span>, <span class="str">'South'</span>)
+df[<span class="str">'IncomeGroup'</span>] = pd.<span class="fn">qcut</span>(df[<span class="str">'MedInc'</span>], q=<span class="num">3</span>, labels=[<span class="str">'Low'</span>,<span class="str">'Middle'</span>,<span class="str">'High'</span>])
+
+<span class=<span class="str">"kw"</span>>print</span>(df[<span class="str">'Region'</span>].<span class="fn">value_counts</span>())
+<span class=<span class="str">"kw"</span>>print</span>(df[<span class="str">'IncomeGroup'</span>].<span class="fn">value_counts</span>())</code></pre>
+</div>
+</div>
+<div class="section">
+  <h2>🔬 Step 2: Train Model & Measure Bias</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Bias detected:
+  North: RMSE=0.7241, Mean Error=+0.0193 (overpredicted!)
+  South: RMSE=0.7582, Mean Error=-0.0196 (underpredicted!)
+  → The model systematically advantages/disadvantages different regions!</span><span>▶ Run in Colab</span></div>
+  <pre><code><span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Train base model</span>
+model = <span class="fn">LinearRegression</span>()
+model.<span class="fn">fit</span>(X_train, y_train)
+y_pred = model.<span class="fn">predict</span>(X_test)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Measure per-region errors</span>
+test_df[<span class="str">'Error'</span>] = y_pred - y_test
+test_df[<span class="str">'Region'</span>] = df.loc[test_df.index, <span class="str">'Region'</span>]
+<span class=<span class="str">"kw"</span>>for</span> region <span class=<span class="str">"kw"</span>>in</span> [<span class="str">'North'</span>, <span class="str">'South'</span>]:
+    subset = test_df[test_df[<span class="str">'Region'</span>] == region]
+    rmse = np.<span class="fn">sqrt</span>(<span class="fn">mean_squared_error</span>(subset[<span class="str">'Actual'</span>], subset[<span class="str">'Predicted'</span>]))
+    <span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'{region}: RMSE={rmse:.4f}, Mean Error={subset["Error"].<span class="fn">mean</span>():.4f}'</span>)</code></pre>
+</div>
+<div class="img-container"><img src="assets/images/p6_bias_boxplots.png" alt="Prediction error by region and income group"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">Prediction error by region and income group</p></div>
+</div>
+<div class="section">
+  <h2>🌍 Step 3: Environmental Cost</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Environmental cost of this model:
+  Training time: ~1.2s (CPU)
+  Est. energy: 0.00002 kWh
+  Est. CO₂: 0.00001 kg
+  → (But for deep learning: 7.2 kWh, 3.6 kg CO₂ per training run!)</span><span>▶ Run in Colab</span></div>
+  <pre><code><span class=<span class="str">"kw"</span>>import</span> time
+start = time.<span class="fn">time</span>()
+<span class="fn">GridSearchCV</span>(<span class="fn">Ridge</span>(), {<span class="str">'alpha'</span>: [<span class="num">0.01</span>, <span class="num">0.1</span>, <span class="num">1</span>, <span class="num">10</span>]}, cv=<span class="num">3</span>).<span class="fn">fit</span>(X, y)
+elapsed = time.<span class="fn">time</span>() - start
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Training time: {elapsed:.1f}s'</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Est. energy: {elapsed * <span class="num">65</span> / <span class="num">3600</span>:.4f} kWh'</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">'Est. CO₂: {elapsed * <span class="num">65</span> / <span class="num">3600</span> * <span class="num">0.5</span>:.4f} kg'</span>)</code></pre>
+</div>
+</div>
+<div class="section">
+  <h2>💬 Step 4: Discussion Questions</h2>
+  
+        <div class="question-box">
+        <p><strong>1️⃣ — Bias:</strong> 模型系统性高估北方房价、低估南方。如果用来收房产税，公平吗？</p>
+        <p><strong>2️⃣ — Privacy:</strong> 数据包含精确经纬度。能推断出什么个人隐私？</p>
+        <p><strong>3️⃣ — Accountability:</strong> 模型错了谁负责？开发者？数据科学家？学校？</p>
+        <p><strong>4️⃣ — Environmental:</strong> 你的每次 Grid Search 都产生了碳成本。有没有更环保的办法？</p>
+        <p><strong>5️⃣ — Societal:</strong> 自动化房价评估会加剧还是减少住房不平等？</p>
+        </div>
+        
+</div>
+    <div class="nav-links"><div><a href="suite1_project5.html">← Project 5: Classification</a></div><div></div></div>
+  </div>
+  <script>
+  
+  </script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Project 1: EDA & ML Types — Real Code, Real Data — A4 ML Project</title>
+
+<style>
+  :root {
+    --ib-blue: #1a3a5c;
+    --ib-accent: #2e86de;
+    --ib-dark: #0f2a47;
+    --code-bg: #f8f9fa;
+    --hl-green: #27ae60;
+    --hl-purple: #8e44ad;
+    --hl-orange: #e67e22;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f4f6f9;
+    color: #2c3e50;
+    line-height: 1.7;
+    padding: 0;
+  }
+  .header {
+    background: linear-gradient(135deg, var(--ib-blue), #1a5276);
+    color: white;
+    padding: 40px 60px;
+    position: relative;
+  }
+  .header h1 { font-size: 2em; margin-bottom: 8px; }
+  .header .meta { opacity: 0.85; font-size: 0.95em; margin-bottom: 15px; }
+  .header .meta span { margin-right: 20px; }
+  .header .badge { 
+    display: inline-block;
+    background: var(--hl-purple);
+    color: white; padding: 4px 14px; border-radius: 20px;
+    font-size: 0.85em; font-weight: 600; margin: 0 4px 4px 0;
+  }
+  .header .badge.sl { background: #27ae60; }
+  .btn-colab {
+    display: inline-block; background: #1a3a5c; color: white;
+    padding: 10px 24px; border-radius: 6px; text-decoration: none;
+    font-weight: 600; margin-top: 12px; border: 2px solid rgba(255,255,255,0.3);
+    transition: all 0.2s;
+  }
+  .btn-colab:hover { background: #2e86de; border-color: transparent; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+  .section { 
+    background: white; border-radius: 12px; padding: 30px 35px;
+    margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .section h2 { 
+    color: var(--ib-blue); font-size: 1.4em; margin-bottom: 18px;
+    padding-bottom: 10px; border-bottom: 3px solid var(--ib-accent);
+  }
+  .section h3 { color: #1a5276; font-size: 1.15em; margin: 20px 0 12px; }
+  .section p { margin: 10px 0; }
+  .code-card {
+    background: #ffffff; border-radius: 10px; margin: 15px 0;
+    border: 1px solid #d0d7de; box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+  .code-card .code-header {
+    background: #f0f2f5; padding: 8px 16px; font-size: 0.85em;
+    color: #57606a; border-bottom: 1px solid #d0d7de;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .code-card .code-header .lang { font-weight: 600; color: var(--ib-accent); }
+  .code-card pre {
+    background: #ffffff; padding: 18px 20px; overflow-x: auto;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.88em; line-height: 1.6; margin: 0;
+    border-left: 4px solid var(--ib-accent);
+  }
+  .code-card code { font-family: inherit; }
+  .kw { color: #d63384; font-weight: 600; }
+  .str { color: #0d6efd; }
+  .num { color: #198754; }
+  .cmt { color: #6c757d; font-style: italic; }
+  .op { color: #dc3545; }
+  .fn { color: #6f42c1; }
+  .va { color: #0d6efd; font-weight: 500; }
+  .output-box {
+    background: #f8f9fa; border-left: 4px solid #6c757d;
+    padding: 15px 20px; margin: 10px 0; border-radius: 0 6px 6px 0;
+    font-family: 'Consolas', monospace; font-size: 0.9em;
+    white-space: pre-wrap; overflow-x: auto;
+  }
+  .highlight-box {
+    background: #fef9e7; border-left: 4px solid #f39c12;
+    padding: 14px 18px; margin: 12px 0; border-radius: 0 6px 6px 0;
+  }
+  .data-table {
+    width: 100%; border-collapse: collapse; margin: 12px 0;
+    border-radius: 8px; overflow: hidden;
+  }
+  .data-table th {
+    background: var(--ib-blue); color: white; padding: 10px 14px;
+    font-weight: 600; text-align: left; font-size: 0.9em;
+  }
+  .data-table td { padding: 8px 14px; border-bottom: 1px solid #e9ecef; }
+  .data-table tr:nth-child(even) { background: #f8f9fa; }
+  .data-table tr:hover { background: #e8f0fe; }
+  .img-container {
+    margin: 15px 0; text-align: center;
+  }
+  .img-container img {
+    max-width: 100%; border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .interactive-box {
+    background: #eaf2f8; border: 2px solid var(--ib-accent);
+    border-radius: 10px; padding: 20px; margin: 15px 0;
+  }
+  .interactive-box label { font-weight: 600; margin-right: 10px; }
+  .interactive-box input[type="range"] {
+    width: 300px; vertical-align: middle;
+  }
+  .interactive-box .result { 
+    font-size: 1.1em; font-weight: 600; color: var(--ib-accent);
+    margin-top: 10px;
+  }
+  .hl-badge {
+    display: inline-block; background: var(--hl-purple);
+    color: white; padding: 3px 12px; border-radius: 12px;
+    font-size: 0.8em; font-weight: 600; margin: 0 3px;
+  }
+  .hl-badge.sl { background: #27ae60; }
+  .hl-badge.to-know { background: #2e86de; }
+  .hl-badge.warning { background: #e67e22; }
+  .question-box {
+    background: #f0f4ff; border: 1px solid var(--ib-accent);
+    border-radius: 10px; padding: 20px; margin: 15px 0;
+  }
+  .question-box p { margin: 6px 0; }
+  .term-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px; margin: 15px 0;
+  }
+  .term-item {
+    background: #f8f9fa; padding: 8px 12px; border-radius: 6px;
+    border-left: 3px solid var(--ib-accent);
+  }
+  .term-item strong { display: block; color: var(--ib-blue); }
+  .nav-links { 
+    display: flex; justify-content: space-between; margin: 20px 0;
+    padding: 15px 0; border-top: 1px solid #ddd;
+  }
+  .nav-links a { color: var(--ib-accent); text-decoration: none; font-weight: 600; }
+  .nav-links a:hover { text-decoration: underline; }
+  @media (max-width: 768px) {
+    .header { padding: 25px 20px; }
+    .header h1 { font-size: 1.4em; }
+    .section { padding: 20px; }
+    .interactive-box input[type="range"] { width: 180px; }
+  }
+</style>
+
+</head>
+<body>
+  <div class="header">
+    <h1>Project 1: EDA & ML Types — Real Code, Real Data</h1>
+    <div class="meta">📘 Suite 1: Foundation | 🗓️ 课时 1–2 | 🧑‍🎓 SL + HL</div>
+    <div><span class="badge ">A4.1.1 ML Types</span> <span class="badge ">A4.1.2 Hardware</span> <span class="badge sl">SL + HL</span></div>
+    <p><strong>📊 Dataset:</strong> California Housing (US Census, 20,640 rows, 10 columns)</p>
+    
+  </div>
+  <div class="container">
+    <div class="section">
+  <h2>📂 Step 1: Load the Real Dataset</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Load California Housing (20,640 real records)</span><span>▶ Run in Colab</span></div>
+  <pre><code><span class="fn">print_section</span>(<span class="str">"PROJECT <span class="num">1</span>: EXPLORATORY DATA ANALYSIS &amp; ML TYPES"</span>)
+<span class=<span class="str">"kw"</span>>print</span>(<span class="str">"Dataset: California <span class="fn">Housing</span>(<span class="num">1990</span> US Census, <span class="num">20</span>,<span class="num">640</span> records)"</span>)
+df = <span class="fn">load_csv</span>(<span class="str">'housing.csv'</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"\nShape: {df.shape[<span class="num">0</span>]:,} rows × {df.shape[<span class="num">1</span>]} columns"</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"\nColumns: {', '.<span class="fn">join</span>(df.columns)}"</span>)</code></pre>
+</div>
+<div class="output-box">Shape: 20,640 rows × 10 columns
+Columns: MedInc, HouseAge, AveRooms, AveBedrms, Population, AveOccup, Latitude, Longitude, MedHouseVal, OceanProximity
+
+Mean price: $207K
+Median price: $180K
+Price range: $15K - $500K</div>
+</div>
+<div class="section">
+  <h2>📊 Step 2: Explore the Data</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Descriptive statistics & quality check</span><span>▶ Run in Colab</span></div>
+  <pre><code><span class="fn">print_subsection</span>(<span class="str">"First <span class="num">5</span> rows"</span>)
+<span class=<span class="str">"kw"</span>>print</span>(df.<span class="fn">head</span>().<span class="fn">to_string</span>())
+
+<span class="fn">print_subsection</span>(<span class="str">"Summary <span class="fn">Statistics</span>(numerical)"</span>)
+<span class=<span class="str">"kw"</span>>print</span>(df.<span class="fn">describe</span>().<span class="fn">round</span>(<span class="num">3</span>).<span class="fn">to_string</span>())
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Save summary stats</span>
+df.<span class="fn">describe</span>().<span class="fn">round</span>(<span class="num">3</span>).<span class="fn">to_csv</span>(os.path.<span class="fn">join</span>(OUTPUT_DIR, <span class="str">'describe.csv'</span>))
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ── <span class="num">2</span>. Data Quality Check ──</span>
+<span class="fn">print_section</span>(<span class="str">"<span class="num">2</span>. Data Quality — Missing Values &amp; Dtypes"</span>)
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"\nMissing values per column:"</span>)
+<span class=<span class="str">"kw"</span>>print</span>(df.<span class="fn">isnull</span>().<span class="fn">sum</span>().<span class="fn">to_string</span>())
+<span class=<span class="str">"kw"</span>>print</span>(f<span class="str">"\nDtypes:"</span>)
+<span class=<span class="str">"kw"</span>>print</span>(df.dtypes.<span class="fn">to_string</span>())
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ── <span class="num">3</span>. Visualizations ──</span>
+<span class="fn">print_section</span>(<span class="str">"<span class="num">3</span>. Visualizations"</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># 3a. Target distribution</span>
+fig, axes = plt.<span class="fn">subplots</span>(<span class="num">1</span>, <span class="num">2</span>, figsize=(<span class="num">14</span>, <span class="num">5</span>))
+sns.<span class="fn">histplot</span>(df[<span class="str">'MedHouseVal'</span>], bins=<span class="num">50</span>, kde=<span class=<span class="str">"kw"</span>>True</span>, ax=axes[<span class="num">0</span>], color=<span class="str">'<span <span class="kw">class</span>="cmt">#2e86de'</span>)</span>
+axes[<span class="num">0</span>].<span class="fn">set_title</span>(<span class="str">'Distribution of Median House <span class="fn">Value</span>($100K)'</span>, fontsize=<span class="num">13</span>)
+axes[<span class="num">0</span>].<span class="fn">set_xlabel</span>(<span class="str">'Median House <span class="fn">Value</span>($100K)'</span>)
+    <span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ...</span></code></pre>
+</div>
+<div class="output-box">Summary statistics generated above.
+Missing values total: 0
+Missing by column: {'MedInc': 0, 'HouseAge': 0, 'AveRooms': 0, 'AveBedrms': 0, 'Population': 0, 'AveOccup': 0, 'Latitude': 0, 'Longitude': 0, 'MedHouseVal': 0, 'OceanProximity': 0}</div>
+</div>
+<div class="section">
+  <h2>📈 Step 3: Distribution of Target Variable</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Visualize house value distribution</span><span>▶ Run in Colab</span></div>
+  <pre><code><span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># 3a. Target distribution</span>
+fig, axes = plt.<span class="fn">subplots</span>(<span class="num">1</span>, <span class="num">2</span>, figsize=(<span class="num">14</span>, <span class="num">5</span>))
+sns.<span class="fn">histplot</span>(df[<span class="str">'MedHouseVal'</span>], bins=<span class="num">50</span>, kde=<span class=<span class="str">"kw"</span>>True</span>, ax=axes[<span class="num">0</span>], color=<span class="str">'<span <span class="kw">class</span>="cmt">#2e86de'</span>)</span>
+axes[<span class="num">0</span>].<span class="fn">set_title</span>(<span class="str">'Distribution of Median House <span class="fn">Value</span>($100K)'</span>, fontsize=<span class="num">13</span>)
+axes[<span class="num">0</span>].<span class="fn">set_xlabel</span>(<span class="str">'Median House <span class="fn">Value</span>($100K)'</span>)
+axes[<span class="num">0</span>].<span class="fn">set_ylabel</span>(<span class="str">'Frequency'</span>)
+
+sns.<span class="fn">boxplot</span>(y=df[<span class="str">'MedHouseVal'</span>], ax=axes[<span class="num">1</span>], color=<span class="str">'<span <span class="kw">class</span>="cmt">#2e86de'</span>)</span>
+axes[<span class="num">1</span>].<span class="fn">set_title</span>(<span class="str">'Box Plot — Median House Value'</span>, fontsize=<span class="num">13</span>)
+axes[<span class="num">1</span>].<span class="fn">set_ylabel</span>(<span class="str">'Median House <span class="fn">Value</span>($100K)'</span>)
+plt.<span class="fn">tight_layout</span>()
+<span class="fn">save_fig</span>(<span class="str">'p1_target_dist'</span>, fig)
+<span class=<span class="str">"kw"</span>>print</span>(<span class="str">"[Saved] p1_target_dist.png"</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># 3b. Correlation heatmap</span>
+fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="num">10</span>, <span class="num">8</span>))
+corr = df.<span class="fn">select_dtypes</span>(include=[np.number]).<span class="fn">corr</span>()
+mask = np.<span class="fn">triu</span>(np.<span class="fn">ones_like</span>(corr, dtype=bool))
+sns.<span class="fn">heatmap</span>(corr, mask=mask, annot=<span class=<span class="str">"kw"</span>>True</span>, fmt=<span class="str">'.2f'</span>, cmap=<span class="str">'RdBu_r'</span>, 
+            center=<span class="num">0</span>, square=<span class=<span class="str">"kw"</span>>True</span>, linewidths=<span class="num">1</span>, ax=ax, 
+            cbar_kws={<span class="str">'shrink'</span>: <span class="num">0.8</span>})
+ax.<span class="fn">set_title</span>(<span class="str">'Feature Correlation Matrix'</span>, fontsize=<span class="num">14</span>, pad=<span class="num">20</span>)
+plt.<span class="fn">tight_layout</span>()
+<span class="fn">save_fig</span>(<span class="str">'p1_corr_heatmap'</span>, fig)
+<span class=<span class="str">"kw"</span>>print</span>(<span class="str">"[Saved] p1_corr_heatmap.png"</span>)
+    <span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ...</span></code></pre>
+</div>
+<div class="img-container"><img src="assets/images/p1_target_dist.png" alt="Distribution of Median House Value (real data)"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">Distribution of Median House Value (real data)</p></div>
+</div>
+<div class="section">
+  <h2>🔗 Step 4: Correlation Analysis</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Top correlated features:
+  MedInc         : 0.6881
+  AveRooms       : 0.1519
+  HouseAge       : 0.1056
+  AveOccup       : -0.0237
+  Population     : -0.0246
+  Longitude      : -0.0460
+  AveBedrms      : -0.0467
+  Latitude       : -0.1442</span><span>▶ Run in Colab</span></div>
+  <pre><code><span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># Correlation <span class=<span class="str">"kw"</span>>with</span> target variable</span>
+corr_with_target = df.<span class="fn">select_dtypes</span>(include=[np.number]).<span class="fn">corr</span>()[<span class="str">'MedHouseVal'</span>].<span class="fn">drop</span>(<span class="str">'MedHouseVal'</span>).<span class="fn">sort_values</span>(ascending=<span class=<span class="str">"kw"</span>>False</span>)
+<span class=<span class="str">"kw"</span>>print</span>(corr_with_target)</code></pre>
+</div>
+<div class="img-container"><img src="assets/images/p1_corr_heatmap.png" alt="Full correlation matrix (real data)"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">Full correlation matrix (real data)</p></div>
+</div>
+<div class="section">
+  <h2>🗺️ Step 5: Geographic & Income Patterns</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Geographic visualization of housing prices</span><span>▶ Run in Colab</span></div>
+  <pre><code><span class=<span class="str">"kw"</span>>print</span>(corr_with_target.<span class="fn">to_string</span>())
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># 3c. Geo scatter</span>
+fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="num">12</span>, <span class="num">8</span>))
+sc = ax.<span class="fn">scatter</span>(df[<span class="str">'Longitude'</span>], df[<span class="str">'Latitude'</span>], c=df[<span class="str">'MedHouseVal'</span>], 
+                cmap=<span class="str">'viridis'</span>, alpha=<span class="num">0.3</span>, s=<span class="num">5</span>)
+plt.<span class="fn">colorbar</span>(sc, ax=ax, label=<span class="str">'Median House <span class="fn">Value</span>($100K)'</span>)
+ax.<span class="fn">set_title</span>(<span class="str">'California Housing Prices — Geographic Distribution'</span>, fontsize=<span class="num">14</span>)
+ax.<span class="fn">set_xlabel</span>(<span class="str">'Longitude'</span>)
+ax.<span class="fn">set_ylabel</span>(<span class="str">'Latitude'</span>)
+ax.<span class="fn">grid</span>(<span class=<span class="str">"kw"</span>>True</span>, alpha=<span class="num">0.3</span>)
+plt.<span class="fn">tight_layout</span>()
+<span class="fn">save_fig</span>(<span class="str">'p1_geo_scatter'</span>, fig)
+<span class=<span class="str">"kw"</span>>print</span>(<span class="str">"[Saved] p1_geo_scatter.png"</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># 3d. Median Income vs House Value</span>
+fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="num">10</span>, <span class="num">6</span>))
+ax.<span class="fn">scatter</span>(df[<span class="str">'MedInc'</span>], df[<span class="str">'MedHouseVal'</span>], alpha=<span class="num">0.3</span>, s=<span class="num">5</span>, c=<span class="str">'<span <span class="kw">class</span>="cmt">#2e86de'</span>)</span>
+ax.<span class="fn">set_title</span>(<span class="str">'Median Income vs Median House Value'</span>, fontsize=<span class="num">14</span>)
+ax.<span class="fn">set_xlabel</span>(<span class="str">'Median <span class="fn">Income</span>($10K)'</span>)
+ax.<span class="fn">set_ylabel</span>(<span class="str">'Median House <span class="fn">Value</span>($100K)'</span>)
+ax.<span class="fn">grid</span>(<span class=<span class="str">"kw"</span>>True</span>, alpha=<span class="num">0.3</span>)
+plt.<span class="fn">tight_layout</span>()
+<span class="fn">save_fig</span>(<span class="str">'p1_income_vs_value'</span>, fig)
+<span class=<span class="str">"kw"</span>>print</span>(<span class="str">"[Saved] p1_income_vs_value.png"</span>)
+    <span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ...</span></code></pre>
+</div>
+<div class="img-container"><img src="assets/images/p1_geo_scatter.png" alt="California housing price map — real census data"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">California housing price map — real census data</p></div>
+</div>
+<div class="section">
+  <h2>💰 Step 6: Income vs House Value</h2>
+  <div class="code-card">
+  <div class="code-header"><span class="lang">🐍 Median Income vs Median House Value</span><span>▶ Run in Colab</span></div>
+  <pre><code><span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># 3d. Median Income vs House Value</span>
+fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="num">10</span>, <span class="num">6</span>))
+ax.<span class="fn">scatter</span>(df[<span class="str">'MedInc'</span>], df[<span class="str">'MedHouseVal'</span>], alpha=<span class="num">0.3</span>, s=<span class="num">5</span>, c=<span class="str">'<span <span class="kw">class</span>="cmt">#2e86de'</span>)</span>
+ax.<span class="fn">set_title</span>(<span class="str">'Median Income vs Median House Value'</span>, fontsize=<span class="num">14</span>)
+ax.<span class="fn">set_xlabel</span>(<span class="str">'Median <span class="fn">Income</span>($10K)'</span>)
+ax.<span class="fn">set_ylabel</span>(<span class="str">'Median House <span class="fn">Value</span>($100K)'</span>)
+ax.<span class="fn">grid</span>(<span class=<span class="str">"kw"</span>>True</span>, alpha=<span class="num">0.3</span>)
+plt.<span class="fn">tight_layout</span>()
+<span class="fn">save_fig</span>(<span class="str">'p1_income_vs_value'</span>, fig)
+<span class=<span class="str">"kw"</span>>print</span>(<span class="str">"[Saved] p1_income_vs_value.png"</span>)
+
+<span <span class=<span class="str">"kw"</span>>class</span>=<span class="str">"cmt"</span>># ── <span class="num">4</span>. ML Types Discussion ──</span>
+<span class="fn">print_section</span>(<span class="str">"<span class="num">4</span>. ML Types — Applied to Our Dataset"</span>)
+
+<span class=<span class="str">"kw"</span>>print</span>(<span class="str">""</span><span class="str">"
+=== <span class="num">4.1</span> SUPERVISED LEARNING ===
+Task: Predict <span class="fn">MedHouseVal</span>(continuous) → REGRESSION
+Features: MedInc, HouseAge, AveRooms, Latitude, Longitude, etc.
+Target: MedHouseVal
+
+Key question: Given a house's features, what is its expected market value?
+This is the classic supervised task — we have labelled training data.
+
+=== <span class="num">4.2</span> UNSUPERVISED LEARNING ===
+Task: Group similar neighbourhoods → CLUSTERING
+    <span <span class="</span>kw<span class="str">">class</span>="</span>cmt"># ...</span></code></pre>
+</div>
+<div class="img-container"><img src="assets/images/p1_income_vs_value.png" alt="Income vs House Value — each dot is a real neighborhood"><p style="text-align:center;font-size:0.9em;color:#666;margin-top:6px">Income vs House Value — each dot is a real neighborhood</p></div>
+</div>
+<div class="section">
+  <h2>🧠 Learning Check</h2>
+  
+        <div class="question-box">
+        <p><strong>1️⃣</strong> 刚才的代码中，<code>df.describe()</code> 给出了哪些统计量？为什么对真实数据有用？</p>
+        <p><strong>2️⃣</strong> 散点图中，加州沿海的房价是不是普遍比内陆高？你是怎么知道的？</p>
+        <p><strong>3️⃣</strong> 这个数据集适合哪种 ML 类型？SL/UL/RL？为什么？</p>
+        <p><strong>4️⃣</strong> 如果我要在课堂上用 2GB RAM 的笔记本跑这段代码，行不行？</p>
+        </div>
+        <div class="term-grid">
+          <div class="term-item"><strong>EDA</strong>探索性数据分析 — 用可视化理解数据</div>
+          <div class="term-item"><strong>describe()</strong>pandas 的描述统计函数</div>
+          <div class="term-item"><strong>corr()</strong>皮尔逊相关系数矩阵</div>
+          <div class="term-item"><strong>Regression</strong>预测连续数值</div>
+        </div>
+        
+</div>
+    <div class="nav-links"><div></div><div><a href="suite1_project2.html">Next → Project 2: Data Preprocessing</a></div></div>
+  </div>
+  <script>
+  
+  </script>
+</body>
+</html>
